@@ -1,0 +1,58 @@
+"""
+How to use
+
+--filepath "D:\\testcsv.csv"
+
+--filepath "D:\\testcsv.csv" --delimiter ,
+"""
+
+import pandas as pd
+import argparse
+
+
+parser = argparse.ArgumentParser(description="processs file")
+parser.add_argument('--filepath', type=str, required=True,
+                    help="here give the entire file path like c:\\users\\folder\\test.csv")
+parser.add_argument('--delimiter', default=',', help="here give delimiter used in csv file")
+args = parser.parse_args()
+file_path = args.filepath
+delimiter = args.delimiter
+percentage = 80
+
+df = pd.read_csv(file_path, delimiter=delimiter)
+
+desc_df = df.sort_values("NumberReviews", ascending=False)
+
+len_of_df = len(desc_df)
+
+len_top_80_percent_df = int(len_of_df*percentage/100)
+
+"""
+top_80_percent_df returns top 80% of number of reviews
+"""
+top_80_percent_df = desc_df[:len_top_80_percent_df]
+
+"""
+This top_100_dataframe returns top 100 overall rating 
+"""
+top_100_dataframe = top_80_percent_df.sort_values("Overallrating", ascending=False)[:100]
+
+"""uncomment above line then it will write dat into top_100.csv in current folder"""
+
+# top_100_dataframe.to_csv('top_100.csv')
+
+
+
+"""
+In this cusines_dataframe we will get category of cusines and count
+Example:
+Catefory    counts
+Indian      10
+Chinese     20
+Continental 9
+"""
+cusines_dataframe = top_100_dataframe.groupby(['Category']).size().reset_index(name='counts')
+print(cusines_dataframe)
+"""uncomment bellow code it will write cusines dataframe into cusines_count_in_top100.csv in current dir"""
+
+# cusines_dataframe.to_csv('cusines_count_in_top100.csv')
